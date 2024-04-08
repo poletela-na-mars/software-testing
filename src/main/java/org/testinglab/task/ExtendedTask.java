@@ -7,7 +7,7 @@ public class ExtendedTask extends Task {
 
     /**
      * @param priority
-     * @param waitableJob job of the task; returns true if need wait
+     * @param waitableJob job of the task; returns true, if need wait
      */
     public ExtendedTask(Priority priority, BooleanSupplier waitableJob) {
         super(priority);
@@ -19,6 +19,10 @@ public class ExtendedTask extends Task {
     @Override
     public void run() {
         state = job.getAsBoolean() ? State.WAITING : State.SUSPENDED;
+    }
+
+    public void waitEvent() {
+        throw new RuntimeException("WAIT EVENT");
     }
 
     final public void waitMove() {

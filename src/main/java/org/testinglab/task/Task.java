@@ -52,6 +52,10 @@ public abstract class Task {
         return state;
     }
 
+    @Override
+    public String toString() {
+        return "Task №" + idx + " with priority " + priority + " | " + state;
+    }
 
     @Override
     public int hashCode() {

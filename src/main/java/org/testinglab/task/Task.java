@@ -7,7 +7,7 @@ public abstract class Task {
     final private Priority priority;
     final static private AtomicInteger initIdx = new AtomicInteger(0);
     private final int idx = initIdx.getAndIncrement();
-    protected State state = State.SUSPENDED;
+    protected volatile State state = State.SUSPENDED;
 
     Task(Priority priority) {
         this.priority = priority;
@@ -21,7 +21,7 @@ public abstract class Task {
 
     final public void start() {
         if (state != State.READY) {
-            throw new TaskException("Can not start, when state is not " + State.READY);
+            throw new TaskException("Can not start, when state is not " + State.READY + ", but " + this);
         }
         state = State.RUNNING;
         run();

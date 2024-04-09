@@ -5,32 +5,21 @@ import org.testinglab.task.Task;
 import java.util.concurrent.*;
 
 public class Processor {
-    private final ExecutorService core = Executors.newSingleThreadExecutor();
+    private final ExecutorService core = Executors.newSingleThreadExecutor((r) -> new Thread(r, "Core thread"));
 
     public Processor() {
     }
 
-    private CompletableFuture<Void> currentJob;
+    private Future<Void> currentJob;
 
-//    public Future<Void> assign(Task task/*, Supplier<Void> onExecutionFinished*/) {
-//        if (currentJob != null) throw new IllegalStateException("Can't take new task while last one still working");
-//        currentJob = CompletableFuture.runAsync(task::start, core).thenAccept((Void) -> {
-//            currentJob = null;
-////            onExecutionFinished.get();
-//        });
-//        return core.submit(() -> currentJob.get());
-//    }
-
-    public Future<Void> assign(Task task/*, Supplier<Void> onExecutionFinished*/) {
+    public Future<Void> assign(Task task) {
         if (currentJob != null) throw new IllegalStateException("Can't take new task while last one still working");
-        currentJob = CompletableFuture.runAsync(task::start, core);
-        return core.submit(() -> {
-            try {
-                currentJob.get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-            currentJob = null; return null; });
+        currentJob = core.submit(() -> { task.start(); return null; });
+        return currentJob;
+    }
+
+    public void clear() {
+        currentJob = null;
     }
 
     public void cancel() {

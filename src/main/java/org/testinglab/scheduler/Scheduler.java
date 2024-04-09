@@ -6,21 +6,17 @@ import org.testinglab.task.State;
 import org.testinglab.task.Task;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class Scheduler {
     public final int maxReadyTasks;
-
-    private final AtomicInteger size = new AtomicInteger(0);
+    private volatile int size = 0;
 
     private final HashMap<Priority, LinkedList<Task>> queue = new HashMap<>();
 
     public Scheduler(int maxReadyTasks) {
         this.maxReadyTasks = maxReadyTasks;
 
-        for (var priority: Priority.values()) {
+        for (var priority : Priority.values()) {
             queue.put(priority, new LinkedList<>());
         }
     }
@@ -30,11 +26,11 @@ public class Scheduler {
     }
 
     public boolean isEmpty() {
-        return size.get() == 0;
+        return size == 0;
     }
 
     public boolean isFull() {
-        return size.get() == maxReadyTasks;
+        return size == maxReadyTasks;
     }
 
     public Priority currentMaxPriority() {
@@ -52,7 +48,7 @@ public class Scheduler {
         synchronized (this) {
             for (var priority : Priority.sortedReversedValues()) {
                 if (!queue.get(priority).isEmpty()) {
-                    size.decrementAndGet();
+                    size--;
                     return queue.get(priority).pop();
                 }
             }
@@ -69,19 +65,15 @@ public class Scheduler {
 
         assert task.getState() == State.READY;
         synchronized (this) {
-            size.incrementAndGet();
+            size++;
             queue.get(task.getPriority()).push(task);
             System.out.println("Scheduled task: " + task);
+            System.out.flush();
         }
     }
 
-//    public void subscribeOnHigherPriorityTask(Priority than, Consumer<Task> onHigherPriority) {
-//        throw new RuntimeException("TODO");
-//    }
-
-
     public void stop() {
-        throw new RuntimeException("TODO: free queue");
+        queue.clear();
     }
 
     public final static int DEFAULT_MAX_READY_TASKS_COUNT = 5;

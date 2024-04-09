@@ -6,6 +6,7 @@ import org.testinglab.task.*;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BooleanSupplier;
 
+import static java.lang.System.exit;
 import static java.lang.System.out;
 
 public class System {
@@ -26,47 +27,54 @@ public class System {
         new Thread(() -> {
             outer: while (!isClosed) {
                 var task = getTask();
-                out.println("Task " + task + " received on execution by System");
+                out.println(task + " received on execution by System");
+                out.flush();
                 var job = processor.assign(task);
-                while (!job.isDone()) {
-//                    out.println("max: " + scheduler.currentMaxPriority().value);
-//                    out.println("current: " + task.getPriority().value);
+                inner: while (!job.isDone()) {
                     if (!scheduler.isEmpty() && scheduler.currentMaxPriority().value > task.getPriority().value) {
                         // TODO: maybe protect sync?
-                        out.println("Preempt task " + task);
+                        var preemptedTask = task;
+                        out.println("Preempt task " + preemptedTask);
+                        out.flush();
                         processor.cancel();
-                        task.preempt();
+                        preemptedTask.preempt();
 
                         new Thread(() -> {
-                            scheduler.scheduleTask(task);
-                        }).start();
+                            scheduler.scheduleTask(preemptedTask);
+                        }, "Schedule on preempt thread").start();
+
                         continue outer;
                     }
                 }
 
                 try {
                     job.get();
+                    processor.clear();
                 } catch (InterruptedException | ExecutionException e) {
-                    out.println("1?");
+                    out.println(e);
+                    out.flush();
                     e.printStackTrace();
                 }
 
-                if (task.getState() == State.WAITING) onTaskWaiting((ExtendedTask) task);
-                else onTaskCompleted(task);
+                if (task instanceof ExtendedTask && ((ExtendedTask) task).isWaitingNeed()) {
+                    out.println("Wait event on + " + task);
+                    onTaskWaiting((ExtendedTask) task);
+                } else onTaskCompleted(task);
             }
-        }).start();
+        }, "OS thread").start();
     }
 
     private void onTaskWaiting(ExtendedTask task) {
         new Thread(() -> {
-            task.waitEvent();
+            task.waitMove();
             schedule(task);
-        }).start();
+        }, "Waiting Event thread").start();
     }
 
     private void onTaskCompleted(Task task) {
-        out.println("Task " + task + " completed");
-//        start();
+        task.terminate();
+        out.println(task + " completed");
+        java.lang.System.out.flush();
     }
 
     public void newBasicTask(Priority priority, TaskJob job) {

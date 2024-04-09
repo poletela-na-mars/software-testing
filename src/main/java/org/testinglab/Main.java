@@ -1,5 +1,7 @@
 package org.testinglab;
 
+import org.testinglab.scheduler.FullQueueException;
+
 import java.util.Random;
 
 public class Main {
@@ -11,7 +13,11 @@ public class Main {
         var random = new Random();
 
         while (true) {
-            taskGenerator.generate();
+            try {
+                taskGenerator.generate();
+            } catch (FullQueueException e) {
+                Thread.sleep(100);
+            }
             Thread.sleep(random.nextInt(100));
         }
     }

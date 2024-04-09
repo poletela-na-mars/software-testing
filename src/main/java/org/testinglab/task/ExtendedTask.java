@@ -1,9 +1,12 @@
 package org.testinglab.task;
 
+import org.testinglab.WaitEventGenerator;
+
 import java.util.function.BooleanSupplier;
 
 public class ExtendedTask extends Task {
     private final BooleanSupplier job;
+    private final WaitEventGenerator waitEventGenerator = new WaitEventGenerator();
 
     /**
      * @param priority
@@ -28,7 +31,7 @@ public class ExtendedTask extends Task {
 
     public void waitEvent() {
         try {
-            Thread.sleep(100);
+            Thread.sleep(waitEventGenerator.generate());
         } catch (InterruptedException ignored) {
         }
     }
@@ -50,5 +53,10 @@ public class ExtendedTask extends Task {
         needWaiting = false;
 
         state = State.READY;
+    }
+
+    @Override
+    public String toString() {
+        return "Extended" + super.toString();
     }
 }

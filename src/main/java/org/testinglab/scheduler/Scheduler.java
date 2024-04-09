@@ -58,7 +58,7 @@ public class Scheduler {
     }
 
     public void scheduleTask(Task task) throws SchedulingException {
-        if (isFull()) throw new FullQueueException("Lack of tasks in queue");
+        if (isFull()) throw new FullQueueException("Queue is full");
 
         if (task.getState() == State.WAITING) ((ExtendedTask) task).release();
         else if (task.getState() == State.SUSPENDED) task.activate();

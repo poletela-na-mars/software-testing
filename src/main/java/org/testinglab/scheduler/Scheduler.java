@@ -33,6 +33,10 @@ public class Scheduler {
         return size == maxReadyTasks;
     }
 
+    public int getSize() {
+        return size;
+    }
+
     public Priority currentMaxPriority() {
         if (isEmpty()) throw new EmptyQueueException("");
         synchronized (this) {

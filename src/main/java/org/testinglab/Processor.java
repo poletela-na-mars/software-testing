@@ -11,6 +11,10 @@ public class Processor {
 
     private Future<Void> currentJob;
 
+    public Future<Void> getCurrentJob() {
+        return currentJob;
+    }
+
     public Future<Void> assign(Task task) {
         if (currentJob != null) throw new IllegalStateException("Can't take new task while last one still working");
         currentJob = core.submit(() -> { task.start(); return null; });

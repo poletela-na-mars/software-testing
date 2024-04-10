@@ -66,7 +66,7 @@ public class System {
                     if (!scheduler.isEmpty() && scheduler.currentMaxPriority().value > task.getPriority().value) {
                         isPreempting = true;
                         // wait if task is moving from ready to running right now
-                        while (task.getState() == State.READY) ;
+                        while (task.getState() == State.READY);
                         continue outer;
                     }
                 }

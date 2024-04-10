@@ -66,8 +66,9 @@ public class Scheduler {
         assert task.getState() == State.READY;
         synchronized (this) {
             size++;
-            queue.get(task.getPriority()).push(task);
-            System.out.println("Scheduled task: " + task);
+            var taskPriority = task.getPriority();
+            queue.get(taskPriority).push(task);
+            System.out.println("Scheduled task: " + task + " from Queue №" + taskPriority.value);
             System.out.flush();
         }
     }

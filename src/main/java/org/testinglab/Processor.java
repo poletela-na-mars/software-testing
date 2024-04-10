@@ -7,8 +7,7 @@ import java.util.concurrent.*;
 public class Processor {
     private final ExecutorService core = Executors.newSingleThreadExecutor((r) -> new Thread(r, "Core thread"));
 
-    public Processor() {
-    }
+    public Processor() {}
 
     private Future<Void> currentJob;
 

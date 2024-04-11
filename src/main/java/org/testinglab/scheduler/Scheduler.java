@@ -79,6 +79,7 @@ public class Scheduler {
 
     public void stop() {
         queue.clear();
+        size = 0;
     }
 
     public final static int DEFAULT_MAX_READY_TASKS_COUNT = 5;

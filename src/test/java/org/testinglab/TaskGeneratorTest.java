@@ -66,7 +66,7 @@ public class TaskGeneratorTest {
      */
     @Test
     void testQueueIncrease() {
-        // empty queue
+        assertTrue(scheduler.isEmpty());
         taskGenerator.generate();
         assertEquals(scheduler.getSize(), 1);
     }

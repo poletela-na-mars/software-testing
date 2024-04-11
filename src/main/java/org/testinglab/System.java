@@ -11,9 +11,9 @@ import static java.lang.System.out;
 public class System {
     private final Processor processor;
     private final Scheduler scheduler;
-    private boolean isClosed = false;
-    private volatile boolean isPreempting = false;
-    private volatile boolean isWaiting = false;
+    protected boolean isClosed = false;
+    protected volatile boolean isPreempting = false;
+    protected volatile boolean isWaiting = false;
 
     public System(Processor processor, Scheduler scheduler) {
         this.processor = processor;
@@ -86,7 +86,7 @@ public class System {
         }, "OS thread").start();
     }
 
-    private void onTaskCompleted(Task task) {
+    protected void onTaskCompleted(Task task) {
         task.terminate();
         out.println(task + " completed");
         java.lang.System.out.flush();

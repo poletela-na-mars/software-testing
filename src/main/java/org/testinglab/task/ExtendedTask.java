@@ -17,7 +17,7 @@ public class ExtendedTask extends Task {
         this.job = waitableJob;
     }
 
-    private boolean needWaiting = false;
+    private volatile boolean needWaiting = false;
 
     public boolean isWaitingNeed() {
         return needWaiting;

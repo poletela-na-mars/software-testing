@@ -6,7 +6,7 @@ import java.util.Random;
 import java.util.function.BooleanSupplier;
 
 public class JobGenerator {
-    private final Random random = new Random();
+    private final Random random = new Random(100);
     private TaskJob getJob(int ms) {
         return () -> {
             try {

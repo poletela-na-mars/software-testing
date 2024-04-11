@@ -10,7 +10,7 @@ public class Main {
         sys.start();
 
         var taskGenerator = new TaskGenerator(sys);
-        var random = new Random();
+        var random = new Random(100);
 
         while (true) {
             try {

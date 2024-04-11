@@ -6,7 +6,7 @@ import org.testinglab.task.TaskJob;
 import java.util.Random;
 
 public class TaskGenerator {
-    private final Random random = new Random();
+    private final Random random = new Random(100);
     private final JobGenerator jobGenerator = new JobGenerator();
     private final System system;
 
